@@ -1,0 +1,46 @@
+# Import Libraries
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.cluster import KMeans
+from sklearn.preprocessing import StandardScaler
+
+# Load the Dataset
+# Replace 'Mall_Customers.csv' with your dataset file path
+data = pd.read_csv('Mall_Customers.csv')
+
+# Explore the Dataset
+print("Dataset Head:")
+print(data.head())
+print("\nDataset Info:")
+print(data.info())
+
+# Select Features for Clustering
+# Use 'Age', 'Annual Income (k$)', and 'Spending Score (1-100)'
+features = data[['Age', 'Annual Income (k$)', 'Spending Score (1-100)']]
+
+# Normalize the Data
+scaler = StandardScaler()
+normalized_features = scaler.fit_transform(features)
+
+# Apply K-Means Clustering
+kmeans = KMeans(n_clusters=5, random_state=42)
+data['Cluster'] = kmeans.fit_predict(normalized_features)
+
+# Visualize the Clusters
+sns.scatterplot(
+    x=data['Annual Income (k$)'],
+    y=data['Spending Score (1-100)'],
+    hue=data['Cluster'],
+    palette='tab10'
+)
+plt.title("Customer Segments")
+plt.xlabel("Annual Income (k$)")
+plt.ylabel("Spending Score (1-100)")
+plt.legend(title="Cluster")
+plt.grid()
+plt.show()
+
+# Save Results
+data.to_csv('Customer_Segments.csv', index=False)
+print("Segmented data saved to 'Customer_Segments.csv'")
